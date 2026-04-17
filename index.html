@@ -465,18 +465,40 @@ body{
 }
 
 /* ===================== ACTOR GRID ===================== */
-.actor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-@media(max-width:500px){.actor-grid{grid-template-columns:1fr 1fr}}
+.actor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:600px){.actor-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.actor-grid{grid-template-columns:1fr}}
 .actor-chip{
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-md);
-  padding:10px 12px;text-align:center;
-  font-size:12px;color:var(--ink-secondary);
-  transition:box-shadow var(--transition),border-color var(--transition);
+  border-radius:var(--radius-lg);
+  padding:14px 16px;
+  text-align:center;
+  font-size:12px;
+  border:1px solid transparent;
+  transition:box-shadow var(--transition),transform var(--transition);
 }
-.actor-chip:hover{box-shadow:var(--shadow-sm);border-color:var(--border-strong)}
-.actor-chip strong{display:block;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.actor-chip:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.actor-chip.judicial{background:#e6f1fb;border-color:#b5d4f4;color:#0c447c}
+.actor-chip.mp{background:#e1f5ee;border-color:#9fe1cb;color:#0a5c48}
+.actor-chip.civil{background:#faeeda;border-color:#fac775;color:#633806}
+.actor-chip.municipal{background:#fcebeb;border-color:#f7c1c1;color:#791f1f}
+.actor-chip.federal{background:#f1efe8;border-color:#c8c6bf;color:#3a3932}
+.actor-chip.empresa{background:#faeeda;border-color:#fac775;color:#633806}
+.actor-chip.movimento{background:#fcebeb;border-color:#f7c1c1;color:#791f1f}
+.actor-chip.academico{background:#e1f5ee;border-color:#9fe1cb;color:#0a5c48}
+.actor-chip.comunidade{background:#e6f1fb;border-color:#b5d4f4;color:#0c447c}
+.actor-chip strong{
+  display:block;
+  font-family:'Sora',sans-serif;
+  font-size:14px;font-weight:700;
+  margin-bottom:4px;
+  color:inherit;
+}
+.actor-chip span{
+  font-size:11px;
+  opacity:.8;
+  line-height:1.4;
+  display:block;
+}
 
 /* ===================== INDICATOR TABLE ===================== */
 .ind-table-wrap{width:100%;overflow-x:auto}
@@ -822,8 +844,8 @@ svg.ring{transform:rotate(-90deg)}
           <div style="font-family:'Sora',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9a9992;margin-bottom:10px">Legenda</div>
           <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5f5e5a">
             <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#1d9e75;border:2px solid #0a5c48;flex-shrink:0"></div>Rondônia (território de pesquisa)</div>
-            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#c2ddd4;flex-shrink:0"></div>Região Norte</div>
-            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#d8e4e0;flex-shrink:0"></div>Demais estados</div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#a8ccbf;border:1px solid #fff;flex-shrink:0"></div>Região Norte</div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#c5d8d3;border:1px solid #fff;flex-shrink:0"></div>Demais estados</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#0a5c48;flex-shrink:0"></div>Jaci-Paraná (foco da pesquisa)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#e24b4a;flex-shrink:0"></div>Porto Velho (capital)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#ba7517;flex-shrink:0"></div>UHEs do Complexo Madeira</div>
@@ -949,19 +971,23 @@ svg.ring{transform:rotate(-90deg)}
     const key = Object.keys(topo.objects)[0];
     features = topojson.feature(topo, topo.objects[key]).features;
 
-    /* ── State fills (no stroke — borders drawn separately) ── */
+    /* ── State fills WITH visible white stroke border ── */
+    /* The IBGE v3 API returns independent geometries (no shared arcs),
+       so topojson.mesh(a!==b) yields nothing. We draw stroke directly. */
     g.selectAll('.mstate')
       .data(features)
       .join('path')
       .attr('class','mstate')
       .attr('d', curPath)
-      .attr('stroke','none')
+      .attr('stroke','#ffffff')
+      .attr('stroke-width', 1.2)
+      .attr('stroke-linejoin','round')
       .style('cursor','pointer')
       .attr('fill', d => {
         const id = String(d.id||d.properties?.codarea||'');
-        if(id==='11') return '#1d9e75';          /* Rondônia — green accent */
-        if(norteIds.has(id)) return '#c2ddd4';   /* Região Norte — soft teal */
-        return '#d8e4e0';                         /* Demais — neutral */
+        if(id==='11') return '#1d9e75';
+        if(norteIds.has(id)) return '#a8ccbf';
+        return '#c5d8d3';
       })
       .on('mousemove',(e,d)=>{
         const id=String(d.id||d.properties?.codarea||'');
@@ -970,11 +996,11 @@ svg.ring{transform:rotate(-90deg)}
       })
       .on('mouseenter',(e,d)=>{
         const id=String(d.id||d.properties?.codarea||'');
-        d3.select(e.target).attr('fill',id==='11'?'#0f7a5a':norteIds.has(id)?'#a8cdc2':'#bfd0cc');
+        d3.select(e.target).attr('fill',id==='11'?'#0f7a5a':norteIds.has(id)?'#88b5a6':'#a8c0ba');
       })
       .on('mouseleave',function(e,d){
         const id=String(d.id||d.properties?.codarea||'');
-        d3.select(this).attr('fill',id==='11'?'#1d9e75':norteIds.has(id)?'#c2ddd4':'#d8e4e0');
+        d3.select(this).attr('fill',id==='11'?'#1d9e75':norteIds.has(id)?'#a8ccbf':'#c5d8d3');
         hideTip();
       })
       .on('click',(e,d)=>{
@@ -982,28 +1008,7 @@ svg.ring{transform:rotate(-90deg)}
         if(id==='11') mapSetView('rondonia',null);
       });
 
-    /* ── Internal state borders via topojson.mesh ── */
-    g.append('path')
-      .attr('id','stateBorders')
-      .datum(topojson.mesh(topo, topo.objects[key], (a,b) => a !== b))
-      .attr('d', curPath)
-      .attr('fill','none')
-      .attr('stroke','#6a9e8c')
-      .attr('stroke-width', 0.8)
-      .attr('stroke-linejoin','round')
-      .attr('pointer-events','none');
-
-    /* ── Outer border (country outline) ── */
-    g.append('path')
-      .attr('id','countryBorder')
-      .datum(topojson.merge(topo, topo.objects[key].geometries))
-      .attr('d', curPath)
-      .attr('fill','none')
-      .attr('stroke','#3a7a68')
-      .attr('stroke-width', 1.4)
-      .attr('pointer-events','none');
-
-    /* ── Rondônia highlight ring ── */
+    /* ── Rondônia highlight ring (drawn on top of fills) ── */
     const roFeat = features.find(f=>String(f.id||f.properties?.codarea)==='11');
     if(roFeat){
       g.append('path')
@@ -1012,7 +1017,7 @@ svg.ring{transform:rotate(-90deg)}
         .attr('d',curPath)
         .attr('fill','none')
         .attr('stroke','#0a5c48')
-        .attr('stroke-width',2)
+        .attr('stroke-width',2.5)
         .attr('pointer-events','none');
 
       const b=curPath.bounds(roFeat);
@@ -1020,7 +1025,8 @@ svg.ring{transform:rotate(-90deg)}
         .attr('x',(b[0][0]+b[1][0])/2).attr('y',(b[0][1]+b[1][1])/2)
         .attr('text-anchor','middle')
         .attr('font-family','Sora,sans-serif').attr('font-size',12).attr('font-weight',700)
-        .attr('fill','#fff').attr('pointer-events','none').text('RO');
+        .attr('fill','#fff').attr('stroke','rgba(0,0,0,.2)').attr('stroke-width',.5)
+        .attr('pointer-events','none').text('RO');
     }
 
     /* ── POIs ── */
@@ -1076,12 +1082,10 @@ svg.ring{transform:rotate(-90deg)}
     const npath = d3.geoPath().projection(np);
     curProj=np; curPath=npath;
 
-    /* State fills */
+    /* State fills + stroke borders */
     g.selectAll('.mstate').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
 
-    /* Borders */
-    g.select('#stateBorders').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
-    g.select('#countryBorder').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
+    /* Rondônia ring */
     g.select('#roRing').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
 
     /* POIs */
@@ -1097,7 +1101,7 @@ svg.ring{transform:rotate(-90deg)}
     d3.select('#jaciLabel').transition().duration(650).attr('x',jx+10).attr('y',jy-10);
     d3.select('#pvhLabel').transition().duration(650).attr('x',pvx+9).attr('y',pvy+4);
 
-    /* RO label */
+    /* RO label reposition */
     const roFeat=features.find(f=>String(f.id||f.properties?.codarea)==='11');
     if(roFeat){
       const b=npath.bounds(roFeat);
@@ -1294,16 +1298,16 @@ svg.ring{transform:rotate(-90deg)}
   </div>
 
   <div class="section-label">Rede de atores — governança interinstitucional</div>
-  <div class="actor-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
-    <div class="actor-chip"><strong>TJRO</strong>Tribunal de Justiça de Rondônia</div>
-    <div class="actor-chip"><strong>MPRO / MPF</strong>Ministério Público Estadual e Federal</div>
-    <div class="actor-chip"><strong>Defensoria Pública</strong>Acesso à justiça para populações vulneráveis</div>
-    <div class="actor-chip"><strong>Prefeitura Porto Velho</strong>Gestão municipal e saneamento</div>
-    <div class="actor-chip"><strong>IBAMA / ANA</strong>Licenciamento e recursos hídricos</div>
-    <div class="actor-chip"><strong>ESBR / SAE</strong>Consórcios concessionários das UHEs</div>
-    <div class="actor-chip"><strong>MAB</strong>Movimento dos Atingidos por Barragens</div>
-    <div class="actor-chip"><strong>UNIR / CNPq</strong>Pesquisa e monitoramento acadêmico</div>
-    <div class="actor-chip"><strong>Comunidade</strong>Participação social e controle social</div>
+  <div class="actor-grid" style="margin-bottom:20px">
+    <div class="actor-chip judicial"><strong>TJRO</strong><span>Tribunal de Justiça de Rondônia</span></div>
+    <div class="actor-chip mp"><strong>MPRO / MPF</strong><span>Ministério Público Estadual e Federal</span></div>
+    <div class="actor-chip mp"><strong>Defensoria Pública</strong><span>Acesso à justiça para populações vulneráveis</span></div>
+    <div class="actor-chip municipal"><strong>Prefeitura Porto Velho</strong><span>Gestão municipal e saneamento</span></div>
+    <div class="actor-chip federal"><strong>IBAMA / ANA</strong><span>Licenciamento e recursos hídricos</span></div>
+    <div class="actor-chip empresa"><strong>ESBR / SAE</strong><span>Consórcios concessionários das UHEs</span></div>
+    <div class="actor-chip movimento"><strong>MAB</strong><span>Movimento dos Atingidos por Barragens</span></div>
+    <div class="actor-chip academico"><strong>UNIR / CNPq</strong><span>Pesquisa e monitoramento acadêmico</span></div>
+    <div class="actor-chip comunidade"><strong>Comunidade</strong><span>Participação social e controle social</span></div>
   </div>
 
   <div class="section-label">Lacunas institucionais</div>

@@ -328,10 +328,27 @@ body{
 }
 .card-source{font-size:10px;color:var(--ink-muted);margin-top:10px;font-style:italic}
 
-/* ===================== GRID LAYOUTS ===================== */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-@media(max-width:680px){.grid-2,.grid-3{grid-template-columns:1fr}}
+/* ===================== MAP VIEW BUTTONS ===================== */
+.map-view-btn{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:500;
+  padding:5px 12px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.15);
+  color:#fff;
+  cursor:pointer;
+  transition:all .15s;
+  white-space:nowrap;
+}
+.map-view-btn:hover{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.55)}
+.map-view-btn.active{background:#fff;color:var(--green);border-color:#fff;font-weight:600}
+
+/* ===================== GRID OVERFLOW FIX ===================== */
+.grid-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.grid-3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media(max-width:700px){.grid-2{grid-template-columns:1fr}}
+@media(max-width:680px){.grid-3{grid-template-columns:1fr}}
 
 /* ===================== FEW NEXUS CARDS ===================== */
 .few-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -386,10 +403,10 @@ body{
 
 /* ===================== BAR ROWS ===================== */
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.bar-label{font-size:11px;color:var(--ink-secondary);width:160px;flex-shrink:0;text-align:right}
+.bar-label{font-size:11px;color:var(--ink-secondary);min-width:120px;max-width:160px;flex-shrink:0;text-align:right;line-height:1.3}
 .bar-track{flex:1;background:var(--surface-3);border-radius:4px;height:8px;overflow:hidden}
 .bar-fill{height:100%;border-radius:4px}
-.bar-val{font-size:12px;font-weight:500;color:var(--ink);width:40px;text-align:left}
+.bar-val{font-size:12px;font-weight:500;color:var(--ink);min-width:40px;text-align:left}
 
 /* ===================== ALERT LIST ===================== */
 .alert-list{display:flex;flex-direction:column;gap:8px}
@@ -460,13 +477,15 @@ body{
 .actor-chip strong{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
 
 /* ===================== INDICATOR TABLE ===================== */
-.ind-table{width:100%;border-collapse:collapse;font-size:12px}
+.ind-table-wrap{width:100%;overflow-x:auto}
+.ind-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
 .ind-table th{
   font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--ink-muted);padding:6px 10px;text-align:left;
-  border-bottom:1px solid var(--border);background:var(--surface-2);
+  color:var(--ink-muted);padding:8px 10px;text-align:left;
+  border-bottom:2px solid var(--border);background:var(--surface-2);
+  white-space:nowrap;
 }
-.ind-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--ink)}
+.ind-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--ink);vertical-align:middle;word-break:break-word}
 .ind-table tr:last-child td{border-bottom:none}
 .ind-table tr:hover td{background:var(--surface-2)}
 .status-pill{
@@ -611,8 +630,8 @@ svg.ring{transform:rotate(-90deg)}
 <section class="module active" id="mod-home">
 
   <div class="hero-band">
-    <div class="hero-title">Jaci-Paraná — Porto Velho, Rondônia</div>
-    <div class="hero-sub">Coord.: Prof. Dr. Mariluce Paes-de-Souza &nbsp;·&nbsp; Fonte principal: IBGE Censo 2022 / PNAD 2023</div>
+    <div class="hero-title">Prof. Dr. Mariluce Paes-de-Souza</div>
+    <div class="hero-sub">Coordenadora · DHJUS / UNIR / CNPq &nbsp;·&nbsp; Dados: IBGE Censo 2022 / PNAD Contínua 2023</div>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hero-stat-val">11.672</div><div class="hero-stat-label">Habitantes (2022)</div></div>
       <div class="hero-stat"><div class="hero-stat-val">3.927</div><div class="hero-stat-label">Domicílios</div></div>
@@ -769,10 +788,10 @@ svg.ring{transform:rotate(-90deg)}
         <div style="font-size:11px;opacity:.75">Porto Velho · Rondônia · Amazônia Legal</div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap" id="mapTagRow">
-        <span class="filter-chip active" style="background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.4);color:#fff" onclick="mapSetView('brasil',this)">Brasil</span>
-        <span class="filter-chip" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2)" onclick="mapSetView('rondonia',this)">Rondônia</span>
-        <span class="filter-chip" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2)" onclick="mapSetView('pvh',this)">Porto Velho</span>
-        <span class="filter-chip" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2)" onclick="mapSetView('jaci',this)">Jaci-Paraná</span>
+        <button class="map-view-btn active" onclick="mapSetView('brasil',this)">Brasil</button>
+        <button class="map-view-btn" onclick="mapSetView('rondonia',this)">Rondônia</button>
+        <button class="map-view-btn" onclick="mapSetView('pvh',this)">Porto Velho</button>
+        <button class="map-view-btn" onclick="mapSetView('jaci',this)">Jaci-Paraná</button>
       </div>
     </div>
 
@@ -939,7 +958,7 @@ svg.ring{transform:rotate(-90deg)}
       .join('path')
       .attr('class','mstate')
       .attr('d', curPath)
-      .attr('stroke','#fff').attr('stroke-width',0.8)
+      .attr('stroke','#6b9e8a').attr('stroke-width',0.6)
       .style('cursor','pointer')
       .style('transition','fill .2s')
       .attr('fill', d => {
@@ -1059,12 +1078,10 @@ svg.ring{transform:rotate(-90deg)}
     document.getElementById('mapHint').textContent = hints[vk]||'';
     document.getElementById('mapCoord').textContent = coords[vk]||'';
 
-    /* Sync tag buttons */
+    /* Sync view buttons */
     const tagMap={brasil:0,rondonia:1,pvh:2,jaci:3};
-    const tags=document.querySelectorAll('#mapTagRow .filter-chip');
-    tags.forEach((t,i)=>{
-      t.style.background = i===tagMap[vk]?'rgba(255,255,255,.3)':'';
-      t.style.borderColor = i===tagMap[vk]?'rgba(255,255,255,.5)':'rgba(255,255,255,.2)';
+    document.querySelectorAll('#mapTagRow .map-view-btn').forEach((t,i)=>{
+      t.classList.toggle('active', i===tagMap[vk]);
     });
   };
 })();
@@ -1133,8 +1150,9 @@ svg.ring{transform:rotate(-90deg)}
   <div class="grid-2">
     <div class="card">
       <div class="card-title">Indicadores por dimensão — Jaci-Paraná / RO</div>
+      <div class="ind-table-wrap">
       <table class="ind-table">
-        <thead><tr><th>Dimensão</th><th>Indicador</th><th>Valor</th><th>Status</th></tr></thead>
+        <thead><tr><th style="width:18%">Dimensão</th><th style="width:28%">Indicador</th><th style="width:24%">Valor</th><th style="width:30%">Status</th></tr></thead>
         <tbody>
           <tr><td>Água</td><td>Acesso à rede</td><td>60% (Norte)</td><td><span class="status-pill warn">Atenção</span></td></tr>
           <tr><td>Água</td><td>Esgoto tratado</td><td>8,5% (RO)</td><td><span class="status-pill crit">Crítico</span></td></tr>
@@ -1144,6 +1162,7 @@ svg.ring{transform:rotate(-90deg)}
           <tr><td>Alimento</td><td>Inseg. mod./grave</td><td>5,1% (RO)</td><td><span class="status-pill ok">Baixo</span></td></tr>
         </tbody>
       </table>
+      </div>
     </div>
     <div class="card">
       <div class="card-title">ODS — alinhamento com indicadores FEW</div>
@@ -1258,8 +1277,9 @@ svg.ring{transform:rotate(-90deg)}
   <div class="section-label">Lacunas institucionais</div>
   <div class="card">
     <div class="card-title">Diagnóstico de lacunas — governança ambiental e social</div>
+    <div class="ind-table-wrap">
     <table class="ind-table">
-      <thead><tr><th>Área</th><th>Lacuna identificada</th><th>Ator responsável</th><th>Status</th></tr></thead>
+      <thead><tr><th style="width:16%">Área</th><th style="width:34%">Lacuna identificada</th><th style="width:26%">Ator responsável</th><th style="width:24%">Status</th></tr></thead>
       <tbody>
         <tr><td>Saneamento</td><td>ETA Jaci-Paraná concluída mas inoperante</td><td>ESBR / Prefeitura PVH</td><td><span class="status-pill crit">Crítico</span></td></tr>
         <tr><td>Saúde</td><td>UPA em local irregular e sem funcionamento</td><td>ESBR</td><td><span class="status-pill crit">Crítico</span></td></tr>
@@ -1270,6 +1290,7 @@ svg.ring{transform:rotate(-90deg)}
         <tr><td>Pesca</td><td>Queda de espécies — surubim, pintado, bagre</td><td>IBAMA / ANA</td><td><span class="status-pill crit">Crítico</span></td></tr>
       </tbody>
     </table>
+    </div>
     <div class="card-source">Fontes: IBAMA (Parecer 40/2012); MAB; Plataforma Dhesca; SciELO; ANA (Ofício 330/2015)</div>
   </div>
 
@@ -1431,31 +1452,40 @@ function showModule(id, btn) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('mod-' + id).classList.add('active');
   btn.classList.add('active');
-  setTimeout(initCharts, 50);
+  setTimeout(initCharts, 80);
 }
 
-/* ===================== FILTERS ===================== */
+/* ===================== FILTERS — HOME ===================== */
 function toggleChip(el) {
   el.classList.toggle('active');
+  // If chip belongs to home filter, re-apply
+  if (el.closest('#mod-home')) applyFilters();
 }
 
 function applyFilters() {
-  const period = document.getElementById('fPeriod').value;
-  const local = document.getElementById('fLocal').value;
-  const activeChips = [...document.querySelectorAll('#mod-home .filter-chip.active')].map(c => c.dataset.filter).filter(Boolean);
-  const kpis = document.querySelectorAll('#mod-home .kpi[data-filters]');
-  kpis.forEach(k => {
+  const activeChips = [...document.querySelectorAll('#mod-home .filter-group .filter-chip.active')]
+    .map(c => c.dataset.filter).filter(Boolean);
+
+  // KPI cards
+  document.querySelectorAll('#mod-home .kpi[data-filters]').forEach(k => {
     const f = k.dataset.filters;
     const visible = activeChips.length === 0 || activeChips.some(c => f.includes(c));
     k.style.display = visible ? '' : 'none';
   });
+
+  // Chart cards — show/hide based on active chips
+  const chartAlim = document.querySelector('#mod-home .card[data-filters="alimentar"]');
+  const chartSan  = document.querySelector('#mod-home .card[data-filters="saneamento"]');
+  if (chartAlim) chartAlim.style.display = (activeChips.length === 0 || activeChips.includes('alimentar')) ? '' : 'none';
+  if (chartSan)  chartSan.style.display  = (activeChips.length === 0 || activeChips.includes('saneamento')) ? '' : 'none';
 }
 
 function resetFilters() {
   document.getElementById('fPeriod').value = 'all';
   document.getElementById('fLocal').value = 'all';
-  document.querySelectorAll('#mod-home .filter-chip').forEach(c => c.classList.add('active'));
+  document.querySelectorAll('#mod-home .filter-group .filter-chip').forEach(c => c.classList.add('active'));
   document.querySelectorAll('#mod-home .kpi[data-filters]').forEach(k => k.style.display = '');
+  document.querySelectorAll('#mod-home .card[data-filters]').forEach(k => k.style.display = '');
 }
 
 /* ===================== TIMELINE ===================== */
@@ -1466,7 +1496,7 @@ const tlData = {
   2011: 'Início das obras das UHEs. A maior revolta operária da década: 22 mil trabalhadores paralisam Jirau. Reassentamento de Mutum Paraná para Nova Mutum Paraná com conflitos e condições precárias.',
   2012: 'No auge das obras, cerca de 20 mil trabalhadores no distrito. Violações de direitos se intensificam. Invenção da Licença de Instalação Parcial para Jirau sem novos estudos de impacto.',
   2014: 'Grande cheia do Madeira: nível atinge 19,69m — recorde histórico. Casas, lavouras e aldeias inundadas. IBAMA constata contaminação da água em Jaci-Paraná por lençol freático elevado.',
-  2022: 'Após a desmobilização das obras, Censo 2022 registra queda para 11.672 habitantes (-11,1% vs. 2010). Os impactos socioambientais persistem sem mitigação completa. ETA e UPA ainda inoperantes.'
+  2022: 'Após a desmobilização das obras, Censo 2022 registra queda para 11.672 habitantes (−11,1% vs. 2010). Os impactos socioambientais persistem sem mitigação completa. ETA e UPA ainda inoperantes.'
 };
 
 function setTL(el, key) {
@@ -1476,56 +1506,48 @@ function setTL(el, key) {
 }
 
 /* ===================== CHARTS ===================== */
-let chartsInit = false;
-let chartEbia, chartTimeline;
+const chartInstances = {};
 
 function initCharts() {
-  const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const gridC = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
-  const textC = isDark ? '#9a9992' : '#9a9992';
+  const gridC = 'rgba(0,0,0,0.06)';
+  const textC = '#9a9992';
+  const fontFamily = "'DM Sans', sans-serif";
 
+  // Chart 1 — EBIA comparativo
   const c1 = document.getElementById('chartEbia');
-  const c2 = document.getElementById('chartTimeline');
-
-  if (c1 && !c1._chartjs) {
-    chartEbia = new Chart(c1, {
+  if (c1) {
+    if (chartInstances.ebia) { chartInstances.ebia.destroy(); }
+    chartInstances.ebia = new Chart(c1, {
       type: 'bar',
       data: {
         labels: ['Região Norte', 'Nordeste', 'Sul', 'Brasil', 'Rondônia'],
         datasets: [
-          {
-            label: 'Seg. alimentar plena',
-            data: [60.3, 61.2, 83.4, 72.4, 94.9],
-            backgroundColor: '#1d9e75',
-            borderRadius: 4,
-            borderSkipped: false
-          },
-          {
-            label: 'Inseg. mod. ou grave',
-            data: [39.7, 38.8, 16.6, 27.6, 5.1],
-            backgroundColor: '#e24b4a',
-            borderRadius: 4,
-            borderSkipped: false
-          }
+          { label: 'Seg. alimentar plena', data: [60.3, 61.2, 83.4, 72.4, 94.9], backgroundColor: '#1d9e75', borderRadius: 4, borderSkipped: false },
+          { label: 'Inseg. mod. ou grave',  data: [39.7, 38.8, 16.6, 27.6,  5.1], backgroundColor: '#e24b4a', borderRadius: 4, borderSkipped: false }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%' } } },
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%' } }
+        },
         scales: {
-          x: { grid: { color: gridC }, ticks: { color: textC, font: { size: 11, family: "'DM Sans', sans-serif" } } },
-          y: { grid: { color: gridC }, ticks: { color: textC, font: { size: 11 }, callback: v => v + '%' }, max: 100 }
+          x: { grid: { color: gridC }, ticks: { color: textC, font: { size: 11, family: fontFamily } } },
+          y: { grid: { color: gridC }, ticks: { color: textC, font: { size: 11 }, callback: v => v + '%' }, max: 100, beginAtZero: true }
         }
       }
     });
   }
 
-  if (c2 && !c2._chartjs) {
-    chartTimeline = new Chart(c2, {
+  // Chart 2 — Série temporal segurança alimentar
+  const c2 = document.getElementById('chartTimeline');
+  if (c2) {
+    if (chartInstances.timeline) { chartInstances.timeline.destroy(); }
+    chartInstances.timeline = new Chart(c2, {
       type: 'line',
       data: {
-        labels: ['2004', '2009', '2013', '2017-18', '2023'],
+        labels: ['2004', '2009', '2013', '2017–18', '2023'],
         datasets: [{
           label: 'Seg. alimentar plena (%)',
           data: [65.0, 69.8, 77.4, 63.3, 72.4],
@@ -1533,14 +1555,17 @@ function initCharts() {
           backgroundColor: 'rgba(29,158,117,0.08)',
           pointBackgroundColor: '#1d9e75',
           pointRadius: 5,
+          pointHoverRadius: 7,
           fill: true,
           tension: 0.35
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => 'Seg. plena: ' + ctx.parsed.y.toFixed(1) + '%' } }
+        },
         scales: {
           x: { grid: { color: gridC }, ticks: { color: textC, font: { size: 11 } } },
           y: { grid: { color: gridC }, ticks: { color: textC, callback: v => v + '%' }, min: 55, max: 85 }

@@ -916,113 +916,62 @@ svg.ring{transform:rotate(-90deg)}
 <!-- D3 map scripts — inside territory module scope -->
 <script>
 (function(){
-  /* API: estado 11 (RO) com resolucao=5 (municípios) */
   const IBGE_URL = 'https://servicodados.ibge.gov.br/api/v3/malhas/estados/11?resolucao=5&formato=application/json';
   const W=680, H=480;
-
-  /* Municípios de destaque */
-  const pvhCode = '1100205'; /* Porto Velho */
-
-  const mapViews = {
-    rondonia: { center:[-63.0,-10.9], scale:2000 },
-    pvh:      { center:[-63.90,-9.5], scale:3800 },
-    jaci:     { center:[-64.45,-9.3], scale:5200 },
-  };
+  const pvhCode = '1100205';
 
   const pois = [
-    { id:'jaci',    name:'Jaci-Paraná',      lon:-64.45, lat:-9.26,  color:'#0a5c48', r:7,  pulse:true,  desc:'Distrito — foco da pesquisa' },
-    { id:'pvh',     name:'Porto Velho',       lon:-63.90, lat:-8.76,  color:'#e24b4a', r:6,  pulse:false, desc:'Capital de Rondônia' },
-    { id:'jirau',   name:'UHE Jirau',         lon:-64.65, lat:-9.27,  color:'#ba7517', r:5,  pulse:false, desc:'3.750 MW · Rio Madeira' },
-    { id:'santo',   name:'UHE Sto. Antônio',  lon:-63.96, lat:-8.79,  color:'#ba7517', r:5,  pulse:false, desc:'3.568 MW · Rio Madeira' },
-    { id:'karipuna',name:'TI Karipuna',       lon:-64.40, lat:-9.55,  color:'#185fa5', r:5,  pulse:false, desc:'Terra Indígena afetada' },
+    { id:'jaci',    name:'Jaci-Paraná',     lon:-64.45, lat:-9.26,  color:'#0a5c48', r:7, pulse:true,  desc:'Distrito — foco da pesquisa' },
+    { id:'pvh',     name:'Porto Velho',      lon:-63.90, lat:-8.76,  color:'#e24b4a', r:6, pulse:false, desc:'Capital de Rondônia' },
+    { id:'jirau',   name:'UHE Jirau',        lon:-64.65, lat:-9.27,  color:'#ba7517', r:5, pulse:false, desc:'3.750 MW · Rio Madeira' },
+    { id:'santo',   name:'UHE Sto. Antônio', lon:-63.96, lat:-8.79,  color:'#ba7517', r:5, pulse:false, desc:'3.568 MW · Rio Madeira' },
+    { id:'karipuna',name:'TI Karipuna',      lon:-64.40, lat:-9.55,  color:'#185fa5', r:5, pulse:false, desc:'Terra Indígena afetada' },
   ];
 
-  /* Build POI list in sidebar */
+  /* Sidebar POI list */
   const poiListEl = document.getElementById('poiList');
   pois.forEach(p => {
     const div = document.createElement('div');
     div.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid #f0ede7;cursor:pointer';
     div.innerHTML = `<div style="width:10px;height:10px;border-radius:50%;background:${p.color};flex-shrink:0;margin-top:3px"></div><div><div style="font-size:13px;font-weight:500;color:#1a1a2e">${p.name}</div><div style="font-size:11px;color:#9a9992">${p.desc}</div></div>`;
-    if(p.id==='jaci') div.addEventListener('click',()=>mapSetView('jaci',null));
-    if(p.id==='pvh')  div.addEventListener('click',()=>mapSetView('pvh',null));
+    if(p.id==='pvh')  div.addEventListener('click',()=>mapSetView('pvh'));
+    if(p.id==='jaci') div.addEventListener('click',()=>mapSetView('jaci'));
     poiListEl.appendChild(div);
   });
   if(poiListEl.lastChild) poiListEl.lastChild.style.borderBottom='none';
 
-  /* Initial projection — centred on RO */
-  let curProj = d3.geoMercator().center([-63.0,-10.9]).scale(2000).translate([W/2,H/2]);
-  let curPath  = d3.geoPath().projection(curProj);
-
-  const svg = d3.select('#mapSvg');
-  const g   = d3.select('#mapG');
+  const g = d3.select('#mapG');
   let features = [];
+  let pvhFeature = null;
 
   /* Tooltip */
   const tip = document.createElement('div');
-  tip.style.cssText = 'position:fixed;background:rgba(26,26,46,.92);color:#fff;font-family:"DM Sans",sans-serif;font-size:12px;padding:7px 12px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;max-width:180px;line-height:1.5';
+  tip.style.cssText = 'position:fixed;background:rgba(26,26,46,.92);color:#fff;font-family:"DM Sans",sans-serif;font-size:12px;padding:7px 12px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;max-width:200px;line-height:1.5';
   document.body.appendChild(tip);
-  function showTip(html,e){tip.innerHTML=html;tip.style.opacity='1';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px'}
-  function hideTip(){tip.style.opacity='0'}
+  function showTip(html,e){tip.innerHTML=html;tip.style.opacity='1';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';}
+  function hideTip(){tip.style.opacity='0';}
 
   /* Pulse animation */
-  const style = document.createElement('style');
-  style.textContent='@keyframes mpulse{0%{r:8;opacity:.9}70%{r:22;opacity:0}100%{r:8;opacity:0}}.mpulse{animation:mpulse 2.2s ease-out infinite}';
-  document.head.appendChild(style);
+  const styleEl = document.createElement('style');
+  styleEl.textContent='@keyframes mpulse{0%{r:8;opacity:.9}70%{r:22;opacity:0}100%{r:8;opacity:0}}.mpulse{animation:mpulse 2.2s ease-out infinite}';
+  document.head.appendChild(styleEl);
 
-  /* ── Load Rondônia municipalities ── */
-  d3.json(IBGE_URL).then(topo => {
-    document.getElementById('mapLoading').style.display='none';
-    const key = Object.keys(topo.objects)[0];
-    features = topojson.feature(topo, topo.objects[key]).features;
+  /* Fit projection to a feature or feature collection */
+  function fitProj(geom, pad){
+    pad = pad || 0.08;
+    return d3.geoMercator().fitExtent(
+      [[W*pad, H*pad],[W*(1-pad), H*(1-pad)]],
+      geom
+    );
+  }
 
-    /* Municipality fills — stroke escuro para demarcar cada município */
-    g.selectAll('.mmunic')
-      .data(features)
-      .join('path')
-      .attr('class','mmunic')
-      .attr('d', curPath)
-      .attr('stroke','#5a9080')
-      .attr('stroke-width', 0.6)
-      .attr('stroke-linejoin','round')
-      .style('cursor','pointer')
-      .attr('fill', d => {
-        const cod = String(d.id || d.properties?.codarea || d.properties?.id || '');
-        if(cod === pvhCode || cod === '1100205') return '#8ecfb0';
-        return '#c0e2d2';
-      })
-      .on('mousemove',(e,d)=>{
-        const nm = d.properties?.nome || d.properties?.name || 'Município';
-        showTip(`<strong>${nm}</strong><br><span style="opacity:.7;font-size:10px">Rondônia</span>`,e);
-      })
-      .on('mouseenter',(e,d)=>{
-        const cod = String(d.id || d.properties?.codarea || '');
-        d3.select(e.target).attr('fill', cod===pvhCode ? '#6ab899' : '#9dd4bc');
-      })
-      .on('mouseleave',function(e,d){
-        const cod = String(d.id || d.properties?.codarea || '');
-        d3.select(this).attr('fill', cod===pvhCode ? '#8ecfb0' : '#c0e2d2');
-        hideTip();
-      })
-      .on('click',(e,d)=>{
-        const nm = d.properties?.nome || d.properties?.name || '';
-        if(nm.toLowerCase().includes('porto velho')) mapSetView('pvh',null);
-      });
-
-    /* RO outer border — fino e escuro */
-    g.append('path')
-      .attr('id','roOutline')
-      .datum(topojson.merge(topo, topo.objects[key].geometries))
-      .attr('d', curPath)
-      .attr('fill','none')
-      .attr('stroke','#0a5c48')
-      .attr('stroke-width', 1.2)
-      .attr('stroke-linejoin','round')
-      .attr('pointer-events','none');
-
-    /* POIs */
+  /* Draw POI dots */
+  function drawPOIs(proj){
     pois.forEach(p=>{
-      const [x,y]=curProj([p.lon,p.lat]);
-      const pg=g.append('g').attr('id','poi-'+p.id);
+      const xy = proj([p.lon, p.lat]);
+      const x=xy[0], y=xy[1];
+      if(x < -10 || x > W+10 || y < -10 || y > H+10) return;
+      const pg = g.append('g');
       if(p.pulse){
         pg.append('circle').attr('class','mpulse')
           .attr('cx',x).attr('cy',y).attr('r',p.r)
@@ -1032,70 +981,137 @@ svg.ring{transform:rotate(-90deg)}
         .attr('cx',x).attr('cy',y).attr('r',p.r)
         .attr('fill',p.color).attr('stroke','#fff').attr('stroke-width',1.8)
         .style('cursor','pointer')
-        .on('mousemove',e=>showTip(`<strong>${p.name}</strong><br><span style="opacity:.75;font-size:10px">${p.desc}</span>`,e))
+        .on('mousemove',function(e){ showTip('<strong>'+p.name+'</strong><br><span style="opacity:.75;font-size:11px">'+p.desc+'</span>',e); })
         .on('mouseleave',hideTip)
-        .on('click',e=>{
+        .on('click',function(e){
           e.stopPropagation();
-          if(p.id==='jaci') mapSetView('jaci',null);
-          if(p.id==='pvh')  mapSetView('pvh',null);
+          if(p.id==='pvh')  mapSetView('pvh');
+          if(p.id==='jaci') mapSetView('jaci');
         });
     });
+  }
 
-    /* Labels — shown at all zoom levels */
-    const [jx,jy]=curProj([-64.45,-9.26]);
-    g.append('text').attr('id','jaciLabel')
-      .attr('x',jx+10).attr('y',jy-10)
-      .attr('font-family','Sora,sans-serif').attr('font-size',10).attr('font-weight',700)
-      .attr('fill','#0a3d2e').attr('pointer-events','none').text('Jaci-Paraná');
+  /* RENDER: all RO municipalities */
+  function renderRondonia(){
+    g.selectAll('*').remove();
+    const fc = {type:'FeatureCollection', features:features};
+    const proj = fitProj(fc);
+    const path = d3.geoPath().projection(proj);
 
-    const [pvx,pvy]=curProj([-63.90,-8.76]);
-    g.append('text').attr('id','pvhLabel')
-      .attr('x',pvx+9).attr('y',pvy+4)
-      .attr('font-family','Sora,sans-serif').attr('font-size',10).attr('font-weight',600)
-      .attr('fill','#8b2020').attr('pointer-events','none').text('Porto Velho');
+    g.selectAll('.mmunic')
+      .data(features)
+      .join('path')
+      .attr('class','mmunic')
+      .attr('d', path)
+      .attr('stroke','#5a9080')
+      .attr('stroke-width', 0.6)
+      .attr('stroke-linejoin','round')
+      .style('cursor','pointer')
+      .attr('fill', function(d){
+        const cod = String(d.id || (d.properties && d.properties.codarea) || '');
+        return cod === pvhCode ? '#8ecfb0' : '#c0e2d2';
+      })
+      .on('mousemove',function(e,d){
+        const nm = (d.properties && (d.properties.nome || d.properties.name)) || 'Município';
+        showTip('<strong>'+nm+'</strong><br><span style="opacity:.7;font-size:10px">Rondônia</span>',e);
+      })
+      .on('mouseenter',function(e,d){
+        const cod = String(d.id || (d.properties && d.properties.codarea) || '');
+        d3.select(e.target).attr('fill', cod===pvhCode ? '#6ab899' : '#9dd4bc');
+      })
+      .on('mouseleave',function(e,d){
+        const cod = String(d.id || (d.properties && d.properties.codarea) || '');
+        d3.select(this).attr('fill', cod===pvhCode ? '#8ecfb0' : '#c0e2d2');
+        hideTip();
+      })
+      .on('click',function(e,d){
+        const cod = String(d.id || (d.properties && d.properties.codarea) || '');
+        if(cod === pvhCode) mapSetView('pvh');
+      });
 
-  }).catch(()=>{
-    document.getElementById('mapLoading').textContent='Não foi possível carregar a malha de Rondônia. Verifique sua conexão.';
+    drawPOIs(proj);
+  }
+
+  /* RENDER: only Porto Velho shape, fit to canvas */
+  function renderPVH(){
+    if(!pvhFeature){ renderRondonia(); return; }
+    g.selectAll('*').remove();
+    const proj = fitProj(pvhFeature, 0.08);
+    const path = d3.geoPath().projection(proj);
+
+    g.append('path')
+      .datum(pvhFeature)
+      .attr('d', path)
+      .attr('fill','#a8d4c0')
+      .attr('stroke','#0a5c48')
+      .attr('stroke-width', 1.2)
+      .attr('stroke-linejoin','round')
+      .style('cursor','default')
+      .on('mousemove',function(e){ showTip('<strong>Porto Velho</strong><br><span style="opacity:.7;font-size:10px">Município — Rondônia</span>',e); })
+      .on('mouseleave',hideTip);
+
+    drawPOIs(proj);
+  }
+
+  /* RENDER: PVH shape zoomed to Jaci-Paraná area */
+  function renderJaci(){
+    if(!pvhFeature){ renderRondonia(); return; }
+    g.selectAll('*').remove();
+    const proj = d3.geoMercator()
+      .center([-64.35, -9.30])
+      .scale(14000)
+      .translate([W/2, H/2]);
+    const path = d3.geoPath().projection(proj);
+
+    g.append('path')
+      .datum(pvhFeature)
+      .attr('d', path)
+      .attr('fill','#a8d4c0')
+      .attr('stroke','#0a5c48')
+      .attr('stroke-width', 1.0)
+      .attr('stroke-linejoin','round')
+      .style('cursor','default')
+      .on('mousemove',function(e){ showTip('<strong>Porto Velho</strong><br><span style="opacity:.7;font-size:10px">Área de Jaci-Paraná</span>',e); })
+      .on('mouseleave',hideTip);
+
+    drawPOIs(proj);
+  }
+
+  /* Load data then render Rondônia by default */
+  d3.json(IBGE_URL).then(function(topo){
+    document.getElementById('mapLoading').style.display='none';
+    const key = Object.keys(topo.objects)[0];
+    features = topojson.feature(topo, topo.objects[key]).features;
+    pvhFeature = features.find(function(f){
+      return String(f.id || (f.properties && f.properties.codarea) || '') === pvhCode;
+    }) || null;
+    renderRondonia();
+  }).catch(function(){
+    document.getElementById('mapLoading').textContent = 'Não foi possível carregar a malha de Rondônia.';
   });
 
-  /* ---- VIEW TRANSITION ---- */
+  /* Public: switch view */
   const hints = {
-    rondonia:'Clique em um município ou use os botões para ampliar',
-    pvh:'Porto Velho — capital e sede do distrito de Jaci-Paraná',
-    jaci:'Jaci-Paraná — foco da pesquisa FEW Nexus/ODS',
+    rondonia: 'Clique em Porto Velho no mapa para ampliar',
+    pvh:      'Porto Velho — capital de Rondônia · Clique em Jaci-Paraná para ampliar',
+    jaci:     'Jaci-Paraná — foco da pesquisa FEW Nexus/ODS',
   };
   const coords = {
-    rondonia:'RO: −10.9°, −63.0°',
-    pvh:'Porto Velho: −8.76°, −63.90°',
-    jaci:'Jaci-Paraná: −9.26°, −64.45°',
+    rondonia: 'RO: −10.9°, −63.0°',
+    pvh:      'Porto Velho: −8.76°, −63.90°',
+    jaci:     'Jaci-Paraná: −9.26°, −64.45°',
   };
 
-  window.mapSetView = function(vk, _btn){
-    const v = mapViews[vk] || mapViews.rondonia;
-    const np = d3.geoMercator().center(v.center).scale(v.scale).translate([W/2,H/2]);
-    const npath = d3.geoPath().projection(np);
-    curProj=np; curPath=npath;
+  window.mapSetView = function(vk){
+    if(vk === 'rondonia')    renderRondonia();
+    else if(vk === 'pvh')    renderPVH();
+    else if(vk === 'jaci')   renderJaci();
 
-    g.selectAll('.mmunic').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
-    g.select('#roOutline').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
+    document.getElementById('mapHint').textContent  = hints[vk] || '';
+    document.getElementById('mapCoord').textContent = coords[vk] || '';
 
-    pois.forEach(p=>{
-      const [x,y]=np([p.lon,p.lat]);
-      d3.select('#poi-'+p.id).selectAll('circle')
-        .transition().duration(650).ease(d3.easeCubicInOut).attr('cx',x).attr('cy',y);
-    });
-
-    const [jx,jy]=np([-64.45,-9.26]);
-    const [pvx,pvy]=np([-63.90,-8.76]);
-    d3.select('#jaciLabel').transition().duration(650).attr('x',jx+10).attr('y',jy-10);
-    d3.select('#pvhLabel').transition().duration(650).attr('x',pvx+9).attr('y',pvy+4);
-
-    document.getElementById('mapHint').textContent = hints[vk]||'';
-    document.getElementById('mapCoord').textContent = coords[vk]||'';
-
-    /* Sync buttons */
-    const tagMap={rondonia:0, pvh:1, jaci:2};
-    document.querySelectorAll('#mapTagRow .map-view-btn').forEach((t,i)=>{
+    const tagMap = {rondonia:0, pvh:1, jaci:2};
+    document.querySelectorAll('#mapTagRow .map-view-btn').forEach(function(t,i){
       t.classList.toggle('active', i===tagMap[vk]);
     });
   };
@@ -1521,7 +1537,6 @@ svg.ring{transform:rotate(-90deg)}
       <div>
         <strong style="color:var(--ink);display:block;margin-bottom:6px">Identificação</strong>
         Produto técnico-tecnológico vinculado ao projeto de pesquisa DHJUS<br>
-        Processo SEI nº 23118.000327/2025-26<br>
         Nível: Doutorado · Linha 1 — Direitos Humanos e Sistemas de Justiça
       </div>
       <div>
@@ -1558,7 +1573,6 @@ svg.ring{transform:rotate(-90deg)}
       <div class="footer-title">Coordenação</div>
       Profª Dra. Mariluce Paes de Souza<br>
       DHJUS / UNIR / CNPq / EMERON<br>
-      Processo SEI nº 23118.000327/2025-26<br>
       Framework: FEW Nexus — Food · Energy · Water
     </div>
     <div class="footer-col">
@@ -1578,7 +1592,7 @@ svg.ring{transform:rotate(-90deg)}
     </div>
   </div>
   <div class="footer-row" style="max-width:1100px;margin:0 auto">
-    <span>Protótipo desenvolvido para fins de pesquisa acadêmica — UNIR/CNPq/EMERON · Processo SEI nº 23118.000327/2025-26</span>
+    <span>Protótipo desenvolvido para fins de pesquisa acadêmica — UNIR/CNPq/EMERON</span>
     <span>Dados: IBGE, PNAD 2023, SNIS 2020, INPE 2023, ANA 2023 | Atualizado: Jul/2026</span>
   </div>
 </footer>

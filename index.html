@@ -51,6 +51,7 @@ body{
   --red-lt:#fcebeb;
 
   /* ODS Official */
+  --ods2:#dda63a;
   --ods6:#26bde2;
   --ods7:#fcc30b;
   --ods12:#bf8b2e;
@@ -398,6 +399,7 @@ body{
 }
 .ods-num{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;line-height:1}
 .ods-title{font-size:10px;font-weight:500;line-height:1.3;margin-top:4px;text-transform:uppercase;letter-spacing:.02em}
+.ods-2{background:var(--ods2);color:#5a3a00}
 .ods-6{background:var(--ods6);color:#04425a}
 .ods-7{background:var(--ods7);color:#6b4e00}
 .ods-12{background:var(--ods12);color:#fff}
@@ -643,6 +645,7 @@ svg.ring{transform:rotate(-90deg)}
     <button class="nav-tab" onclick="showModule('governanca',this)">Governança</button>
     <button class="nav-tab" onclick="showModule('comunidade',this)">Comunidade</button>
     <button class="nav-tab" onclick="showModule('cientifico',this)">Produção Científica</button>
+    <button class="nav-tab" onclick="showModule('atualizacoes',this)">Atualizações</button>
   </div>
 </nav>
 
@@ -655,8 +658,8 @@ svg.ring{transform:rotate(-90deg)}
 
   <div class="hero-band">
     <div class="hero-title">Profª Dra. Mariluce Paes de Souza</div>
-    <div class="hero-sub">Coordenadora · DHJUS / UNIR / CNPq &nbsp;·&nbsp; Porto Velho — Rondônia</div>
-    <div class="hero-sub" style="margin-top:4px;font-size:12px;opacity:.65">Dados: IBGE Censo 2022 / PNAD Contínua 2023 / SNIS 2020</div>
+    <div class="hero-sub">Coordenadora · DHJUS / UNIR / CNPq / EMERON &nbsp;·&nbsp; Porto Velho — Rondônia</div>
+    <div class="hero-sub" style="margin-top:4px;font-size:12px;opacity:.65">Processo SEI nº 23118.000327/2025-26 &nbsp;·&nbsp; Dados: IBGE Censo 2022 / PNAD Contínua 2023 / SNIS 2020</div>
   </div>
 
   <!-- FILTER BAR -->
@@ -766,6 +769,7 @@ svg.ring{transform:rotate(-90deg)}
   <!-- ALERTAS -->
   <div class="section-label">Alertas e contexto crítico</div>
   <div class="alert-list">
+    <div class="alert-item crit"><div class="alert-dot">!</div><div class="alert-text"><strong>Insegurança alimentar nacional:</strong> 27,6% dos domicílios brasileiros apresentaram algum grau de insegurança alimentar (PNAD Contínua 2023, IBGE). Na Amazônia Legal, a insegurança moderada e grave permanece significativa — com impacto direto em Jaci-Paraná (Rede PENSSAN/VIGISAN, 2022–2023).</div></div>
     <div class="alert-item crit"><div class="alert-dot">!</div><div class="alert-text"><strong>Saneamento crítico:</strong> Porto Velho ocupa a 99ª posição entre 100 cidades no Ranking Nacional de Saneamento Básico (Instituto Trata Brasil, 2022) — segunda pior do país.</div></div>
     <div class="alert-item warn"><div class="alert-dot">!</div><div class="alert-text"><strong>Contaminação hídrica documentada:</strong> IBAMA (2014) identificou água consumida em Jaci-Paraná com alto grau de turbidez, consistência espumosa e odor, decorrente da elevação do lençol freático pelo reservatório da UHE Santo Antônio.</div></div>
     <div class="alert-item warn"><div class="alert-dot">!</div><div class="alert-text"><strong>Condicionantes não cumpridas:</strong> Programa de Remanejamento das Populações Atingidas não restabeleceu condições de moradia e renda para famílias reassentadas (MAB/ESBR).</div></div>
@@ -775,6 +779,7 @@ svg.ring{transform:rotate(-90deg)}
   <!-- ODS -->
   <div class="section-label">ODS vinculados ao projeto</div>
   <div class="ods-row">
+    <div class="ods-badge ods-2"><div class="ods-num">02</div><div class="ods-title">Fome zero e agricultura sustentável</div></div>
     <div class="ods-badge ods-6"><div class="ods-num">06</div><div class="ods-title">Água potável e saneamento</div></div>
     <div class="ods-badge ods-7"><div class="ods-num">07</div><div class="ods-title">Energia acessível e limpa</div></div>
     <div class="ods-badge ods-12"><div class="ods-num">12</div><div class="ods-title">Consumo responsável</div></div>
@@ -1281,6 +1286,7 @@ svg.ring{transform:rotate(-90deg)}
     <div class="actor-chip empresa"><strong>ESBR / SAE</strong><span>Consórcios concessionários das UHEs</span></div>
     <div class="actor-chip movimento"><strong>MAB</strong><span>Movimento dos Atingidos por Barragens</span></div>
     <div class="actor-chip academico"><strong>UNIR / CNPq</strong><span>Pesquisa e monitoramento acadêmico</span></div>
+    <div class="actor-chip judicial"><strong>EMERON</strong><span>Escola da Magistratura do Estado de Rondônia</span></div>
     <div class="actor-chip comunidade"><strong>Comunidade</strong><span>Participação social e controle social</span></div>
   </div>
 
@@ -1384,28 +1390,67 @@ svg.ring{transform:rotate(-90deg)}
   <div class="section-label">Produção científica e técnica vinculada</div>
   <div class="pub-list">
     <div class="pub-item">
-      <span class="pub-type">Artigo</span>
-      <div><div class="pub-title">Impactos socioculturais e econômicos: a realidade contemporânea das comunidades ribeirinhas atingidas pelas obras Hidrelétricas de Jirau e Santo Antônio</div><div class="pub-meta">SciELO Brasil &nbsp;·&nbsp; Análise sobre a responsabilidade socioambiental e os impactos não mitigados em Nova Mutum-Paraná</div></div>
+      <span class="pub-type" style="background:#e1f5ee;color:#0a5c48">Publicado</span>
+      <div><div class="pub-title">Deforestation in Amazonian Sustainable Use Biodiversity Protection Areas: The case of the State Sustainable Yield Forests in Rondônia (Brazil)</div><div class="pub-meta">Journal for Nature Conservation &nbsp;·&nbsp; Manuscrito JNC-D-23-00694R2 &nbsp;·&nbsp; Publicado em 2026</div></div>
     </div>
     <div class="pub-item">
-      <span class="pub-type">Artigo</span>
-      <div><div class="pub-title">A Escala Brasileira de Insegurança Alimentar (EBIA) e as principais condicionantes da (in)segurança alimentar no Brasil</div><div class="pub-meta">Geoconexões, IFRN &nbsp;·&nbsp; v. 1, n. 15, 2023 &nbsp;·&nbsp; DOI: 10.15628/geoconexes.2023.14258</div></div>
+      <span class="pub-type rel">Submetido</span>
+      <div><div class="pub-title">Downstream Impacts of Dams and Extreme Floods on the Socioecological Adaptive Cycle of the Madeira River, Brazilian Amazon</div><div class="pub-meta">Journal of Environmental Management &nbsp;·&nbsp; Manuscrito JEMA-D-26-04454 &nbsp;·&nbsp; Submetido em mar/2026</div></div>
     </div>
     <div class="pub-item">
-      <span class="pub-type rel">Relatório</span>
-      <div><div class="pub-title">Relatório Nacional para o Direito ao Meio Ambiente — Violações de direitos dos atingidos pelas barragens do Rio Madeira</div><div class="pub-meta">Plataforma Dhesca &nbsp;·&nbsp; Abril/2011 &nbsp;·&nbsp; Inclui dados de homicídios e condicionantes descumpridas</div></div>
+      <span class="pub-type rel">Submetido</span>
+      <div><div class="pub-title">O lado invisível do prato: a cadeia de valor dos alimentos étnicos na Amazônia</div><div class="pub-meta">RAE – Revista de Administração de Empresas (Qualis A2) &nbsp;·&nbsp; Chamada especial: Pursuing justice logic in Operations and Supply Chain Management &nbsp;·&nbsp; Submetido em mar/2026</div></div>
     </div>
     <div class="pub-item">
-      <span class="pub-type dados">Dados</span>
-      <div><div class="pub-title">PNAD Contínua — Módulo Segurança Alimentar 2023</div><div class="pub-meta">IBGE &nbsp;·&nbsp; Referencial metodológico EBIA &nbsp;·&nbsp; 4º trimestre de 2023 &nbsp;·&nbsp; Disponível em: ibge.gov.br</div></div>
+      <span class="pub-type rel">Submetido</span>
+      <div><div class="pub-title">Informality, Power, and Governance in the Global Value Chain of Brazil Nuts in Brazil and Bolivia</div><div class="pub-meta">Critical Perspectives on International Business (Qualis A1) &nbsp;·&nbsp; Chamada especial: Institutions and Sustainability Paradoxes in Latin American Global Value Chains &nbsp;·&nbsp; Submetido em mar/2026</div></div>
     </div>
     <div class="pub-item">
-      <span class="pub-type dados">Dados</span>
-      <div><div class="pub-title">Censo Demográfico 2022 — Resultados do Universo</div><div class="pub-meta">IBGE &nbsp;·&nbsp; Inclui dados de Jaci-Paraná: 11.672 hab., 3.927 domicílios &nbsp;·&nbsp; Disponível em: censo2022.ibge.gov.br</div></div>
+      <span class="pub-type rel">Submetido</span>
+      <div><div class="pub-title">Políticas Públicas e Governança Social: Uma Revisão Sistemática do PRONATEC no Brasil</div><div class="pub-meta">Revista Responsabilidade Social Corporativa e Gestão Ambiental &nbsp;·&nbsp; Manuscrito CSR-26-0811 &nbsp;·&nbsp; Submetido em mar/2026</div></div>
     </div>
     <div class="pub-item">
-      <span class="pub-type rel">Relatório</span>
-      <div><div class="pub-title">Saneamento Básico em Rondônia — Deficiências no acesso à água tratada e esgoto nas maiores cidades</div><div class="pub-meta">Instituto Trata Brasil &nbsp;·&nbsp; Ranking Saneamento 2022 &nbsp;·&nbsp; Porto Velho: 99ª posição entre 100 cidades</div></div>
+      <span class="pub-type rel">Em revisão</span>
+      <div><div class="pub-title">A influência das UHEs de Santo Antônio, Jirau e Belo Monte na geração hidrelétrica brasileira em tempos de mudanças climáticas</div><div class="pub-meta">Dossiê SPEC — Revista Ambiente & Sociedade &nbsp;·&nbsp; Em parceria com pesquisadores da UFPA, UNICAMP, USP e MSU &nbsp;·&nbsp; jun/2026</div></div>
+    </div>
+    <div class="pub-item">
+      <span class="pub-type rel">Em revisão</span>
+      <div><div class="pub-title">Ciência, políticas públicas e a gestão adaptativa de hidrelétricas na Amazônia</div><div class="pub-meta">Dossiê SPEC — Revista Ambiente & Sociedade &nbsp;·&nbsp; Em parceria com pesquisadores da UFPA, UNICAMP, USP e MSU &nbsp;·&nbsp; jun/2026</div></div>
+    </div>
+    <div class="pub-item">
+      <span class="pub-type dados">Em elaboração</span>
+      <div><div class="pub-title">FEW Nexus (Água, Energia e Alimentos) em Comunidades Amazônicas: desigualdades e justiça social</div><div class="pub-meta">Artigo científico em elaboração &nbsp;·&nbsp; Vinculado diretamente ao projeto de pesquisa DHJUS &nbsp;·&nbsp; Previsão: 2026</div></div>
+    </div>
+    <div class="pub-item">
+      <span class="pub-type dados">Em elaboração</span>
+      <div><div class="pub-title">Protocolo Metodológico para a inclusão de critérios de governança socioecológica em Avaliação de Impacto Ambiental</div><div class="pub-meta">Capítulo de livro &nbsp;·&nbsp; Submissão à chamada PPGSUS/USP/2026 &nbsp;·&nbsp; Governança socioambiental e avaliação de impactos</div></div>
+    </div>
+    <div class="pub-item">
+      <span class="pub-type dados">Técnico</span>
+      <div><div class="pub-title">Relatório Técnico Preliminar 1 — Fases 1 e 2 do Projeto DHJUS</div><div class="pub-meta">Produto técnico previsto &nbsp;·&nbsp; Contempla atividades de ago/2025 a jun/2026 &nbsp;·&nbsp; Em consolidação (jun/2026)</div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Equipe e orientações acadêmicas</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Doutorado DHJUS — Linha 1</div>
+      <div style="font-size:13px;color:var(--ink-secondary);line-height:1.7">
+        <strong style="color:var(--ink)">Orientando:</strong> Ilisir Bueno Rodrigues<br>
+        <strong style="color:var(--ink)">Título:</strong> Cobrança de custas e efetivo acesso à justiça<br>
+        <strong style="color:var(--ink)">Subtítulo:</strong> A cobrança de custas processuais no Poder Judiciário do Estado de Rondônia impede ou dificulta o efetivo acesso à justiça?<br>
+        <strong style="color:var(--ink)">Linha:</strong> Direitos Humanos e Sistema de Justiça<br>
+        <strong style="color:var(--ink)">Área:</strong> Direitos Humanos, Desenvolvimento da Justiça e Políticas Públicas
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Mestrado DHJUS — Linha 1</div>
+      <div style="font-size:13px;color:var(--ink-secondary);line-height:1.7">
+        <strong style="color:var(--ink)">Projeto:</strong> Efeitos da Precarização do Trabalho na Segurança Alimentar em Comunidades Tradicionais: estudo de caso em Jaci-Paraná (RO)<br>
+        <strong style="color:var(--ink)">Mestranda:</strong> Sawoniely Ortolane<br>
+        <strong style="color:var(--ink)">Mestrando:</strong> Pedro Henrique Santos do Nascimento<br>
+        <strong style="color:var(--ink)">Período:</strong> 1º semestre de 2026 a 30/11/2027
+      </div>
     </div>
   </div>
 
@@ -1413,7 +1458,88 @@ svg.ring{transform:rotate(-90deg)}
   <div class="grid-3">
     <div class="card"><div class="card-title">IBGE / Censo 2022</div><p style="font-size:12px;color:var(--ink-secondary)">População, domicílios, saneamento, energia elétrica e características dos moradores por município e distrito. Acesso: censo2022.ibge.gov.br</p></div>
     <div class="card"><div class="card-title">PNAD Contínua / EBIA</div><p style="font-size:12px;color:var(--ink-secondary)">Segurança alimentar por grau de severidade, por região, UF e perfil socioeconômico. Acesso: ibge.gov.br/pnad</p></div>
-    <div class="card"><div class="card-title">SNIS 2020</div><p style="font-size:12px;color:var(--ink-secondary)">Sistema Nacional de Informações sobre Saneamento. Dados de cobertura de água, esgoto e perdas na distribuição por estado. Acesso: snis.gov.br</p></div>
+    <div class="card"><div class="card-title">SNIS / INPE / ANA</div><p style="font-size:12px;color:var(--ink-secondary)">Saneamento básico (SNIS 2020), monitoramento ambiental (INPE 2023) e recursos hídricos (ANA 2023) utilizados como fontes secundárias do projeto.</p></div>
+  </div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- ATUALIZAÇÕES MODULE -->
+<!-- ============================================================ -->
+<section class="module" id="mod-atualizacoes">
+
+  <div class="hero-band" style="margin-top:20px">
+    <div class="hero-title" style="font-size:18px">Histórico de Atualizações</div>
+    <div class="hero-sub">Registro transparente de todas as evoluções e melhorias incorporadas à plataforma</div>
+  </div>
+
+  <div class="section-label" style="margin-top:20px">Julho de 2026 — Atualização a partir dos Relatórios Mensais (Jan–Jun/2026)</div>
+
+  <div class="alert-list" style="margin-bottom:20px">
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>ODS 2 adicionado:</strong> O badge ODS 2 — Fome Zero e Agricultura Sustentável foi incluído na aba Dashboard e no rodapé. Os relatórios mensais e os projetos de Doutorado e Mestrado confirmam que o ODS 2 é central na pesquisa, mas estava ausente na plataforma.</div></div>
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>Parceria EMERON incluída:</strong> A Escola da Magistratura do Estado de Rondônia (EMERON) foi adicionada ao cabeçalho, rodapé e rede de atores da aba Governança. Os relatórios são emitidos com logomarca da EMERON e processo SEI vinculado à instituição.</div></div>
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>Processo SEI registrado:</strong> O número do processo SEI nº 23118.000327/2025-26 foi inserido no cabeçalho do Dashboard e no rodapé, conferindo rastreabilidade institucional à plataforma.</div></div>
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>Novo alerta — 27,6% de insegurança alimentar nacional:</strong> Dado extraído do Relatório de março/2026, baseado em PNAD Contínua 2023 (IBGE) e Rede PENSSAN/VIGISAN 2022–2023, adicionado à seção de Alertas do Dashboard.</div></div>
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>Produção científica real substituída:</strong> As publicações genéricas foram removidas e substituídas pelas produções reais da Profª Dra. Mariluce Paes de Souza, com títulos, periódicos, manuscritos e status corretos extraídos dos relatórios mensais (jan–jun/2026). Total: 10 itens (1 publicado, 5 submetidos, 2 em revisão, 2 em elaboração).</div></div>
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>Equipe de orientação adicionada (Produção Científica):</strong> Incluídas as informações do doutorando Ilisir Bueno Rodrigues e dos mestrandos Sawoniely Ortolane e Pedro Henrique Santos do Nascimento, vinculados ao projeto DHJUS Linha 1.</div></div>
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>Fontes de dados ampliadas:</strong> INPE 2023 e ANA 2023 foram adicionados às fontes do rodapé e da aba Produção Científica, substituindo a referência ao SNIS 2020 como única fonte complementar. Rede PENSSAN/VIGISAN 2022–2023 também incluída.</div></div>
+    <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text"><strong>Rodapé atualizado:</strong> Data de atualização corrigida para Jul/2026. Rodapé agora reflete todas as instituições parceiras e fontes de dados utilizadas no projeto.</div></div>
+  </div>
+
+  <div class="section-label">Contexto — Fase atual do projeto de pesquisa</div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-title">Cronograma — Fase 2 concluída (Jan–Jun/2026)</div>
+      <div class="alert-list">
+        <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text">Coleta piloto e ajustes instrumentais realizados</div></div>
+        <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text">Entrevistas institucionais e com famílias da comunidade iniciadas</div></div>
+        <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text">Instrumento de pesquisa (EBIA + FEW Nexus) revisado e concluído</div></div>
+        <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text">Planilha de tabulação de dados estruturada</div></div>
+        <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text">Visitas ao Distrito de Jaci-Paraná (09–13/03 e 15/06/2026)</div></div>
+        <div class="alert-item ok"><div class="alert-dot">&#10003;</div><div class="alert-text">Modelagem da Plataforma Governança FEW Nexus/ODS em andamento</div></div>
+      </div>
+      <div class="card-source">Fonte: Relatório de Atividades — Jun/2026 (SEI nº 23118.000327/2025-26)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Próxima etapa — Fase 3 (Jul–Dez/2026)</div>
+      <p style="font-size:13px;color:var(--ink-secondary);margin-bottom:12px">A Fase 3 do cronograma prevê a intensificação da coleta de dados empíricos e a alimentação sistemática da plataforma com os resultados de campo.</p>
+      <div class="alert-list">
+        <div class="alert-item info"><div class="alert-dot">i</div><div class="alert-text">Continuidade da pesquisa de campo em Jaci-Paraná</div></div>
+        <div class="alert-item info"><div class="alert-dot">i</div><div class="alert-text">Levantamento de dados secundários ampliado (IBGE, FAO, INPE, ANA, SEPLANRO)</div></div>
+        <div class="alert-item info"><div class="alert-dot">i</div><div class="alert-text">Mapeamento de atores institucionais e comunitários</div></div>
+        <div class="alert-item info"><div class="alert-dot">i</div><div class="alert-text">Alimentação dos módulos da plataforma com dados primários coletados</div></div>
+        <div class="alert-item info"><div class="alert-dot">i</div><div class="alert-text">Lançamento da plataforma e submissão de artigo científico previstos</div></div>
+      </div>
+      <div class="card-source">Fonte: Projeto de Pesquisa Doutorado DHJUS — Jun/2026</div>
+    </div>
+  </div>
+
+  <div class="section-label">Sobre esta plataforma</div>
+  <div class="card">
+    <div class="card-title">Plataforma Governança FEW Nexus/ODS — informações técnicas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:13px;color:var(--ink-secondary)">
+      <div>
+        <strong style="color:var(--ink);display:block;margin-bottom:6px">Identificação</strong>
+        Produto técnico-tecnológico vinculado ao projeto de pesquisa DHJUS<br>
+        Processo SEI nº 23118.000327/2025-26<br>
+        Nível: Doutorado · Linha 1 — Direitos Humanos e Sistemas de Justiça
+      </div>
+      <div>
+        <strong style="color:var(--ink);display:block;margin-bottom:6px">Módulos previstos</strong>
+        Dashboard principal · Indicadores FEW Nexus/ODS<br>
+        Mapa territorial de Jaci-Paraná · Governança e políticas públicas<br>
+        Sistema de Justiça · Produção científica · Histórico de atualizações
+      </div>
+      <div>
+        <strong style="color:var(--ink);display:block;margin-bottom:6px">Finalidade</strong>
+        Visualização de indicadores, monitoramento e apoio à tomada de decisão institucional sobre insegurança alimentar, acesso à água, energia e direitos humanos em comunidades amazônicas impactadas por grandes obras.
+      </div>
+      <div>
+        <strong style="color:var(--ink);display:block;margin-bottom:6px">Última atualização</strong>
+        Julho de 2026<br>
+        Incorporação dos dados extraídos dos Relatórios de Atividades mensais (Jan–Jun/2026) e dos Projetos de Pesquisa de Doutorado e Mestrado DHJUS.
+      </div>
+    </div>
   </div>
 
 </section>
@@ -1431,18 +1557,20 @@ svg.ring{transform:rotate(-90deg)}
     <div class="footer-col">
       <div class="footer-title">Coordenação</div>
       Profª Dra. Mariluce Paes de Souza<br>
-      DHJUS / UNIR / CNPq<br>
+      DHJUS / UNIR / CNPq / EMERON<br>
+      Processo SEI nº 23118.000327/2025-26<br>
       Framework: FEW Nexus — Food · Energy · Water
     </div>
     <div class="footer-col">
       <div class="footer-title">Fontes de dados</div>
       IBGE — Censo 2022 &amp; PNAD Contínua 2023<br>
-      SNIS — Saneamento Básico 2020<br>
+      SNIS 2020 · INPE 2023 · ANA 2023<br>
       Instituto Trata Brasil — Ranking 2022<br>
-      MAB · IBAMA · ANA · Plataforma Dhesca
+      MAB · IBAMA · Rede PENSSAN/VIGISAN 2022–2023
     </div>
     <div class="footer-col">
       <div class="footer-title">ODS Monitorados</div>
+      ODS 02 — Fome zero e agricultura sustentável<br>
       ODS 06 — Água potável e saneamento<br>
       ODS 07 — Energia acessível e limpa<br>
       ODS 12 — Consumo responsável<br>
@@ -1450,8 +1578,8 @@ svg.ring{transform:rotate(-90deg)}
     </div>
   </div>
   <div class="footer-row" style="max-width:1100px;margin:0 auto">
-    <span>Protótipo desenvolvido para fins de pesquisa acadêmica — UNIR/CNPq</span>
-    <span>Dados: IBGE, PNAD 2023, SNIS 2020 | Atualizado: 2024</span>
+    <span>Protótipo desenvolvido para fins de pesquisa acadêmica — UNIR/CNPq/EMERON · Processo SEI nº 23118.000327/2025-26</span>
+    <span>Dados: IBGE, PNAD 2023, SNIS 2020, INPE 2023, ANA 2023 | Atualizado: Jul/2026</span>
   </div>
 </footer>
 

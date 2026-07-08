@@ -842,8 +842,8 @@ svg.ring{transform:rotate(-90deg)}
         <div style="padding:14px 16px;border-bottom:1px solid #e0ded8">
           <div style="font-family:'Sora',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9a9992;margin-bottom:10px">Legenda</div>
           <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5f5e5a">
-            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#c8e6d8;border:1px solid #6b9e8a;flex-shrink:0"></div>Municípios de Rondônia</div>
-            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#a8d4c0;border:1.5px solid #0a5c48;flex-shrink:0"></div>Porto Velho (sede municipal)</div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#c0e2d2;border:1px solid #5a9080;flex-shrink:0"></div>Municípios de Rondônia</div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#8ecfb0;border:1px solid #5a9080;flex-shrink:0"></div>Porto Velho (sede municipal)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#0a5c48;flex-shrink:0"></div>Jaci-Paraná (foco da pesquisa)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#e24b4a;flex-shrink:0"></div>Porto Velho (capital)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#ba7517;flex-shrink:0"></div>UHEs do Complexo Madeira</div>
@@ -970,20 +970,20 @@ svg.ring{transform:rotate(-90deg)}
     const key = Object.keys(topo.objects)[0];
     features = topojson.feature(topo, topo.objects[key]).features;
 
-    /* Municipality fills */
+    /* Municipality fills — stroke escuro para demarcar cada município */
     g.selectAll('.mmunic')
       .data(features)
       .join('path')
       .attr('class','mmunic')
       .attr('d', curPath)
-      .attr('stroke','#ffffff')
-      .attr('stroke-width', 0.8)
+      .attr('stroke','#5a9080')
+      .attr('stroke-width', 0.6)
       .attr('stroke-linejoin','round')
       .style('cursor','pointer')
       .attr('fill', d => {
         const cod = String(d.id || d.properties?.codarea || d.properties?.id || '');
-        if(cod === pvhCode || cod === '1100205') return '#a8d4c0';
-        return '#c8e6d8';
+        if(cod === pvhCode || cod === '1100205') return '#8ecfb0';
+        return '#c0e2d2';
       })
       .on('mousemove',(e,d)=>{
         const nm = d.properties?.nome || d.properties?.name || 'Município';
@@ -991,11 +991,11 @@ svg.ring{transform:rotate(-90deg)}
       })
       .on('mouseenter',(e,d)=>{
         const cod = String(d.id || d.properties?.codarea || '');
-        d3.select(e.target).attr('fill', cod===pvhCode ? '#80b89c' : '#9dcfbb');
+        d3.select(e.target).attr('fill', cod===pvhCode ? '#6ab899' : '#9dd4bc');
       })
       .on('mouseleave',function(e,d){
         const cod = String(d.id || d.properties?.codarea || '');
-        d3.select(this).attr('fill', cod===pvhCode ? '#a8d4c0' : '#c8e6d8');
+        d3.select(this).attr('fill', cod===pvhCode ? '#8ecfb0' : '#c0e2d2');
         hideTip();
       })
       .on('click',(e,d)=>{
@@ -1003,14 +1003,15 @@ svg.ring{transform:rotate(-90deg)}
         if(nm.toLowerCase().includes('porto velho')) mapSetView('pvh',null);
       });
 
-    /* RO outer border ring */
+    /* RO outer border — fino e escuro */
     g.append('path')
       .attr('id','roOutline')
       .datum(topojson.merge(topo, topo.objects[key].geometries))
       .attr('d', curPath)
       .attr('fill','none')
       .attr('stroke','#0a5c48')
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1.2)
+      .attr('stroke-linejoin','round')
       .attr('pointer-events','none');
 
     /* POIs */

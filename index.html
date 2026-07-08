@@ -803,12 +803,11 @@ svg.ring{transform:rotate(-90deg)}
     <!-- Mapa header -->
     <div style="background:var(--green);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <div>
-        <div style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:2px">Território — Mapa Interativo</div>
-        <div style="font-size:11px;opacity:.75">Porto Velho · Rondônia · Amazônia Legal</div>
+        <div style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:2px">Território — Rondônia</div>
+        <div style="font-size:11px;opacity:.75">Porto Velho · Jaci-Paraná · Complexo Madeira</div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap" id="mapTagRow">
-        <button class="map-view-btn active" onclick="mapSetView('brasil',this)">Brasil</button>
-        <button class="map-view-btn" onclick="mapSetView('rondonia',this)">Rondônia</button>
+        <button class="map-view-btn active" onclick="mapSetView('rondonia',this)">Rondônia</button>
         <button class="map-view-btn" onclick="mapSetView('pvh',this)">Porto Velho</button>
         <button class="map-view-btn" onclick="mapSetView('jaci',this)">Jaci-Paraná</button>
       </div>
@@ -828,7 +827,7 @@ svg.ring{transform:rotate(-90deg)}
           </defs>
           <g id="mapG"></g>
         </svg>
-        <div id="mapHint" style="position:absolute;bottom:10px;left:10px;font-size:10px;color:#9a9992;background:rgba(255,255,255,.88);padding:4px 10px;border-radius:20px;border:1px solid #e0ded8">Clique em Rondônia ou nos botões para dar zoom</div>
+        <div id="mapHint" style="position:absolute;bottom:10px;left:10px;font-size:10px;color:#9a9992;background:rgba(255,255,255,.88);padding:4px 10px;border-radius:20px;border:1px solid #e0ded8">Clique em um município ou nos botões para ampliar</div>
         <div id="mapLoading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#edf5f8;font-size:13px;color:#9a9992;font-family:'DM Sans',sans-serif">Carregando malha geográfica IBGE...</div>
       </div>
 
@@ -843,9 +842,8 @@ svg.ring{transform:rotate(-90deg)}
         <div style="padding:14px 16px;border-bottom:1px solid #e0ded8">
           <div style="font-family:'Sora',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9a9992;margin-bottom:10px">Legenda</div>
           <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5f5e5a">
-            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#1d9e75;border:2px solid #0a5c48;flex-shrink:0"></div>Rondônia (território de pesquisa)</div>
-            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#a8ccbf;border:1px solid #fff;flex-shrink:0"></div>Região Norte</div>
-            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#c5d8d3;border:1px solid #fff;flex-shrink:0"></div>Demais estados</div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#c8e6d8;border:1px solid #6b9e8a;flex-shrink:0"></div>Municípios de Rondônia</div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:3px;background:#a8d4c0;border:1.5px solid #0a5c48;flex-shrink:0"></div>Porto Velho (sede municipal)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#0a5c48;flex-shrink:0"></div>Jaci-Paraná (foco da pesquisa)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#e24b4a;flex-shrink:0"></div>Porto Velho (capital)</div>
             <div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;border-radius:50%;background:#ba7517;flex-shrink:0"></div>UHEs do Complexo Madeira</div>
@@ -913,16 +911,17 @@ svg.ring{transform:rotate(-90deg)}
 <!-- D3 map scripts — inside territory module scope -->
 <script>
 (function(){
-  const IBGE_URL = 'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?resolucao=2&formato=application/json';
+  /* API: estado 11 (RO) com resolucao=5 (municípios) */
+  const IBGE_URL = 'https://servicodados.ibge.gov.br/api/v3/malhas/estados/11?resolucao=5&formato=application/json';
   const W=680, H=480;
-  const norteIds = new Set(['11','12','13','14','15','16','17']);
-  const stateNames = {'11':'Rondônia','12':'Acre','13':'Amazonas','14':'Roraima','15':'Pará','16':'Amapá','17':'Tocantins','21':'Maranhão','22':'Piauí','23':'Ceará','24':'Rio Gd. do Norte','25':'Paraíba','26':'Pernambuco','27':'Alagoas','28':'Sergipe','29':'Bahia','31':'Minas Gerais','32':'Espírito Santo','33':'Rio de Janeiro','35':'São Paulo','41':'Paraná','42':'Santa Catarina','43':'Rio Gd. do Sul','50':'Mato Grosso do Sul','51':'Mato Grosso','52':'Goiás','53':'Distrito Federal'};
+
+  /* Municípios de destaque */
+  const pvhCode = '1100205'; /* Porto Velho */
 
   const mapViews = {
-    brasil:   { center:[-54,-14],    scale:640  },
-    rondonia: { center:[-63.34,-11], scale:2700 },
-    pvh:      { center:[-63.90,-8.9],scale:4000 },
-    jaci:     { center:[-64.45,-9.3],scale:5000 },
+    rondonia: { center:[-63.0,-10.9], scale:2000 },
+    pvh:      { center:[-63.90,-9.5], scale:3800 },
+    jaci:     { center:[-64.45,-9.3], scale:5200 },
   };
 
   const pois = [
@@ -938,15 +937,15 @@ svg.ring{transform:rotate(-90deg)}
   pois.forEach(p => {
     const div = document.createElement('div');
     div.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid #f0ede7;cursor:pointer';
-    div.innerHTML = `<div style="width:10px;height:10px;border-radius:50%;background:${p.color};flex-shrink:0;margin-top:3px"></div><div><div style="font-size:12px;font-weight:500;color:#1a1a2e">${p.name}</div><div style="font-size:11px;color:#9a9992">${p.desc}</div></div>`;
+    div.innerHTML = `<div style="width:10px;height:10px;border-radius:50%;background:${p.color};flex-shrink:0;margin-top:3px"></div><div><div style="font-size:13px;font-weight:500;color:#1a1a2e">${p.name}</div><div style="font-size:11px;color:#9a9992">${p.desc}</div></div>`;
     if(p.id==='jaci') div.addEventListener('click',()=>mapSetView('jaci',null));
     if(p.id==='pvh')  div.addEventListener('click',()=>mapSetView('pvh',null));
     poiListEl.appendChild(div);
   });
-  poiListEl.lastChild.style.borderBottom='none';
+  if(poiListEl.lastChild) poiListEl.lastChild.style.borderBottom='none';
 
-  /* Build projection */
-  let curProj = d3.geoMercator().center([-54,-14]).scale(640).translate([W/2,H/2]);
+  /* Initial projection — centred on RO */
+  let curProj = d3.geoMercator().center([-63.0,-10.9]).scale(2000).translate([W/2,H/2]);
   let curPath  = d3.geoPath().projection(curProj);
 
   const svg = d3.select('#mapSvg');
@@ -955,167 +954,141 @@ svg.ring{transform:rotate(-90deg)}
 
   /* Tooltip */
   const tip = document.createElement('div');
-  tip.style.cssText = 'position:fixed;background:rgba(26,26,46,.9);color:#fff;font-family:DM Sans,sans-serif;font-size:12px;padding:7px 11px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;max-width:160px;line-height:1.5';
+  tip.style.cssText = 'position:fixed;background:rgba(26,26,46,.92);color:#fff;font-family:"DM Sans",sans-serif;font-size:12px;padding:7px 12px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;max-width:180px;line-height:1.5';
   document.body.appendChild(tip);
   function showTip(html,e){tip.innerHTML=html;tip.style.opacity='1';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px'}
   function hideTip(){tip.style.opacity='0'}
 
   /* Pulse animation */
   const style = document.createElement('style');
-  style.textContent='@keyframes mpulse{0%{r:8;opacity:.9}70%{r:20;opacity:0}100%{r:8;opacity:0}}.mpulse{animation:mpulse 2.2s ease-out infinite}';
+  style.textContent='@keyframes mpulse{0%{r:8;opacity:.9}70%{r:22;opacity:0}100%{r:8;opacity:0}}.mpulse{animation:mpulse 2.2s ease-out infinite}';
   document.head.appendChild(style);
 
-  /* Load map */
+  /* ── Load Rondônia municipalities ── */
   d3.json(IBGE_URL).then(topo => {
     document.getElementById('mapLoading').style.display='none';
     const key = Object.keys(topo.objects)[0];
     features = topojson.feature(topo, topo.objects[key]).features;
 
-    /* ── State fills WITH visible white stroke border ── */
-    /* The IBGE v3 API returns independent geometries (no shared arcs),
-       so topojson.mesh(a!==b) yields nothing. We draw stroke directly. */
-    g.selectAll('.mstate')
+    /* Municipality fills */
+    g.selectAll('.mmunic')
       .data(features)
       .join('path')
-      .attr('class','mstate')
+      .attr('class','mmunic')
       .attr('d', curPath)
       .attr('stroke','#ffffff')
-      .attr('stroke-width', 1.2)
+      .attr('stroke-width', 0.8)
       .attr('stroke-linejoin','round')
       .style('cursor','pointer')
       .attr('fill', d => {
-        const id = String(d.id||d.properties?.codarea||'');
-        if(id==='11') return '#1d9e75';
-        if(norteIds.has(id)) return '#a8ccbf';
-        return '#c5d8d3';
+        const cod = String(d.id || d.properties?.codarea || d.properties?.id || '');
+        if(cod === pvhCode || cod === '1100205') return '#a8d4c0';
+        return '#c8e6d8';
       })
       .on('mousemove',(e,d)=>{
-        const id=String(d.id||d.properties?.codarea||'');
-        const nm=stateNames[id]||'Estado';
-        showTip(`<strong>${nm}</strong>${id==='11'?'<br><span style="opacity:.75;font-size:10px">Território de pesquisa</span>':''}`,e);
+        const nm = d.properties?.nome || d.properties?.name || 'Município';
+        showTip(`<strong>${nm}</strong><br><span style="opacity:.7;font-size:10px">Rondônia</span>`,e);
       })
       .on('mouseenter',(e,d)=>{
-        const id=String(d.id||d.properties?.codarea||'');
-        d3.select(e.target).attr('fill',id==='11'?'#0f7a5a':norteIds.has(id)?'#88b5a6':'#a8c0ba');
+        const cod = String(d.id || d.properties?.codarea || '');
+        d3.select(e.target).attr('fill', cod===pvhCode ? '#80b89c' : '#9dcfbb');
       })
       .on('mouseleave',function(e,d){
-        const id=String(d.id||d.properties?.codarea||'');
-        d3.select(this).attr('fill',id==='11'?'#1d9e75':norteIds.has(id)?'#a8ccbf':'#c5d8d3');
+        const cod = String(d.id || d.properties?.codarea || '');
+        d3.select(this).attr('fill', cod===pvhCode ? '#a8d4c0' : '#c8e6d8');
         hideTip();
       })
       .on('click',(e,d)=>{
-        const id=String(d.id||d.properties?.codarea||'');
-        if(id==='11') mapSetView('rondonia',null);
+        const nm = d.properties?.nome || d.properties?.name || '';
+        if(nm.toLowerCase().includes('porto velho')) mapSetView('pvh',null);
       });
 
-    /* ── Rondônia highlight ring (drawn on top of fills) ── */
-    const roFeat = features.find(f=>String(f.id||f.properties?.codarea)==='11');
-    if(roFeat){
-      g.append('path')
-        .attr('id','roRing')
-        .datum(roFeat)
-        .attr('d',curPath)
-        .attr('fill','none')
-        .attr('stroke','#0a5c48')
-        .attr('stroke-width',2.5)
-        .attr('pointer-events','none');
+    /* RO outer border ring */
+    g.append('path')
+      .attr('id','roOutline')
+      .datum(topojson.merge(topo, topo.objects[key].geometries))
+      .attr('d', curPath)
+      .attr('fill','none')
+      .attr('stroke','#0a5c48')
+      .attr('stroke-width', 2)
+      .attr('pointer-events','none');
 
-      const b=curPath.bounds(roFeat);
-      g.append('text').attr('id','roLabel')
-        .attr('x',(b[0][0]+b[1][0])/2).attr('y',(b[0][1]+b[1][1])/2)
-        .attr('text-anchor','middle')
-        .attr('font-family','Sora,sans-serif').attr('font-size',12).attr('font-weight',700)
-        .attr('fill','#fff').attr('stroke','rgba(0,0,0,.2)').attr('stroke-width',.5)
-        .attr('pointer-events','none').text('RO');
-    }
-
-    /* ── POIs ── */
+    /* POIs */
     pois.forEach(p=>{
       const [x,y]=curProj([p.lon,p.lat]);
       const pg=g.append('g').attr('id','poi-'+p.id);
       if(p.pulse){
         pg.append('circle').attr('class','mpulse')
           .attr('cx',x).attr('cy',y).attr('r',p.r)
-          .attr('fill','none').attr('stroke',p.color).attr('stroke-width',2).attr('opacity',.8);
+          .attr('fill','none').attr('stroke',p.color).attr('stroke-width',2).attr('opacity',.85);
       }
       pg.append('circle')
         .attr('cx',x).attr('cy',y).attr('r',p.r)
-        .attr('fill',p.color).attr('stroke','#fff').attr('stroke-width',1.5)
+        .attr('fill',p.color).attr('stroke','#fff').attr('stroke-width',1.8)
         .style('cursor','pointer')
         .on('mousemove',e=>showTip(`<strong>${p.name}</strong><br><span style="opacity:.75;font-size:10px">${p.desc}</span>`,e))
         .on('mouseleave',hideTip)
-        .on('click',e=>{e.stopPropagation();if(p.id==='jaci')mapSetView('jaci',null);if(p.id==='pvh')mapSetView('pvh',null);});
+        .on('click',e=>{
+          e.stopPropagation();
+          if(p.id==='jaci') mapSetView('jaci',null);
+          if(p.id==='pvh')  mapSetView('pvh',null);
+        });
     });
 
-    /* ── Labels ── */
+    /* Labels — shown at all zoom levels */
     const [jx,jy]=curProj([-64.45,-9.26]);
-    g.append('text').attr('id','jaciLabel').attr('x',jx+10).attr('y',jy-10)
-      .attr('font-family','Sora,sans-serif').attr('font-size',9).attr('font-weight',700)
+    g.append('text').attr('id','jaciLabel')
+      .attr('x',jx+10).attr('y',jy-10)
+      .attr('font-family','Sora,sans-serif').attr('font-size',10).attr('font-weight',700)
       .attr('fill','#0a3d2e').attr('pointer-events','none').text('Jaci-Paraná');
 
     const [pvx,pvy]=curProj([-63.90,-8.76]);
-    g.append('text').attr('id','pvhLabel').attr('x',pvx+9).attr('y',pvy+4)
-      .attr('font-family','Sora,sans-serif').attr('font-size',9).attr('font-weight',600)
+    g.append('text').attr('id','pvhLabel')
+      .attr('x',pvx+9).attr('y',pvy+4)
+      .attr('font-family','Sora,sans-serif').attr('font-size',10).attr('font-weight',600)
       .attr('fill','#8b2020').attr('pointer-events','none').text('Porto Velho');
 
   }).catch(()=>{
-    document.getElementById('mapLoading').textContent='Não foi possível carregar a malha geográfica. Verifique sua conexão.';
+    document.getElementById('mapLoading').textContent='Não foi possível carregar a malha de Rondônia. Verifique sua conexão.';
   });
 
   /* ---- VIEW TRANSITION ---- */
   const hints = {
-    brasil:'Clique em Rondônia ou nos botões para aproximar',
-    rondonia:'Clique em um ponto ou botão para mais detalhes',
-    pvh:'Porto Velho — capital de Rondônia e sede de Jaci-Paraná',
+    rondonia:'Clique em um município ou use os botões para ampliar',
+    pvh:'Porto Velho — capital e sede do distrito de Jaci-Paraná',
     jaci:'Jaci-Paraná — foco da pesquisa FEW Nexus/ODS',
   };
   const coords = {
-    brasil:'BR: −14°, −54°',
-    rondonia:'RO: −10.83°, −63.34°',
+    rondonia:'RO: −10.9°, −63.0°',
     pvh:'Porto Velho: −8.76°, −63.90°',
     jaci:'Jaci-Paraná: −9.26°, −64.45°',
   };
 
   window.mapSetView = function(vk, _btn){
-    const v = mapViews[vk]||mapViews.brasil;
+    const v = mapViews[vk] || mapViews.rondonia;
     const np = d3.geoMercator().center(v.center).scale(v.scale).translate([W/2,H/2]);
     const npath = d3.geoPath().projection(np);
     curProj=np; curPath=npath;
 
-    /* State fills + stroke borders */
-    g.selectAll('.mstate').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
+    g.selectAll('.mmunic').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
+    g.select('#roOutline').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
 
-    /* Rondônia ring */
-    g.select('#roRing').transition().duration(650).ease(d3.easeCubicInOut).attr('d',npath);
-
-    /* POIs */
     pois.forEach(p=>{
       const [x,y]=np([p.lon,p.lat]);
       d3.select('#poi-'+p.id).selectAll('circle')
         .transition().duration(650).ease(d3.easeCubicInOut).attr('cx',x).attr('cy',y);
     });
 
-    /* Labels */
     const [jx,jy]=np([-64.45,-9.26]);
     const [pvx,pvy]=np([-63.90,-8.76]);
     d3.select('#jaciLabel').transition().duration(650).attr('x',jx+10).attr('y',jy-10);
     d3.select('#pvhLabel').transition().duration(650).attr('x',pvx+9).attr('y',pvy+4);
 
-    /* RO label reposition */
-    const roFeat=features.find(f=>String(f.id||f.properties?.codarea)==='11');
-    if(roFeat){
-      const b=npath.bounds(roFeat);
-      d3.select('#roLabel')
-        .transition().duration(650)
-        .attr('x',(b[0][0]+b[1][0])/2).attr('y',(b[0][1]+b[1][1])/2)
-        .attr('opacity', vk==='brasil'?1:0);
-    }
-
     document.getElementById('mapHint').textContent = hints[vk]||'';
     document.getElementById('mapCoord').textContent = coords[vk]||'';
 
-    /* Sync view buttons */
-    const tagMap={brasil:0,rondonia:1,pvh:2,jaci:3};
+    /* Sync buttons */
+    const tagMap={rondonia:0, pvh:1, jaci:2};
     document.querySelectorAll('#mapTagRow .map-view-btn').forEach((t,i)=>{
       t.classList.toggle('active', i===tagMap[vk]);
     });
